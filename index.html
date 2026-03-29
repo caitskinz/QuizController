@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>J+J Catch Up Quiz – Host Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 10px auto;
+            padding: 15px;
+            background: #1a3e2d;
+            color: #f9f3e1;
+        }
+
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header-image {
+            max-width: 60px;
+            margin-right: 12px;
+            transform: rotate(-20deg);
+        }
+
+        .header-image2 {
+            max-width: 60px;
+            margin-left: 12px;
+            transform: rotate(20deg);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .card {
+            background: #ffffff;
+            color: #1a3e2d;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .round-badge {
+            background: #1a3e2d;
+            color: #f9f3e1;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        button {
+            background: #1a3e2d;
+            color: #f9f3e1;
+            border: 2px solid #1a3e2d;
+            padding: 12px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+
+        button:hover:not(:disabled) {
+            background: #f9f3e1;
+            color: #1a3e2d;
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .success-btn {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            color: white;
+        }
+
+        .success-btn:hover:not(:disabled) {
+            background: #27ae60;
+            color: white;
+        }
+
+        .danger-btn {
+            background: #c0392b;
+            border-color: #c0392b;
+            color: white;
+        }
+
+        .danger-btn:hover:not(:disabled) {
+            background: #a93226;
+            color: white;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #1a3e2d;
+            box-shadow: 0 0 0 3px rgba(26, 62, 45, 0.2);
+        }
+
+        .status {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 10px;
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .status.success {
+            background: #e8f7e8;
+            color: #1f6b1f;
+        }
+
+        .status.error {
+            background: #fdeaea;
+            color: #8a1f1f;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            opacity: 0.85;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            button {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <img src="https://raw.githubusercontent.com/caitskinz/QuizTime/refs/heads/main/79db6d53-7ffa-42a8-b615-412e93d1a57f.png"
+            class="header-image" alt="Quiz icon">
+        <h1>J+J Catch Up Quiz – Host Dashboard</h1>
+        <img src="https://raw.githubusercontent.com/caitskinz/QuizTime/refs/heads/main/79db6d53-7ffa-42a8-b615-412e93d1a57f.png"
+            class="header-image2" alt="Quiz icon">
+    </header>
+
+    <div class="card">
+        <h2>Round Control</h2>
+        <p>
+            Current Round:
+            <span class="round-badge" id="currentRound">Loading...</span>
+        </p>
+        <button onclick="changeRound(-1)">Previous Round</button>
+        <button onclick="changeRound(1)">Next Round</button>
+    </div>
+
+    <div class="card">
+        <h2>Submissions</h2>
+        <button class="success-btn" onclick="toggleSubmissions(true)">Open Submissions</button>
+        <button class="danger-btn" onclick="toggleSubmissions(false)">Close Submissions</button>
+    </div>
+
+    <div class="card">
+        <h2>Broadcast Message</h2>
+        <input type="text" id="messageInput" placeholder="Enter message for participants">
+        <button onclick="sendMessage()">Send Message</button>
+    </div>
+
+    <div id="status" class="status" aria-live="polite"></div>
+
+    <footer class="footer">
+        <p>Quiz Host Control Panel 🎛️</p>
+    </footer>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzCL1hhMUQWa4HP_z-RXhHe5TGFGNkzjI57LCFNbDRATsJfT6fRNDf4YxhAaTAuLA4z/exec';
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+        }
+
+        async function loadConfig() {
+            try {
+                const res = await fetch(SCRIPT_URL);
+                const config = await res.json();
+                document.getElementById('currentRound').textContent = config.CurrentRound;
+            } catch (err) {
+                showStatus('Failed to load configuration.', 'error');
+            }
+        }
+
+        async function updateConfig(data) {
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(data)
+                });
+                showStatus('Configuration updated successfully.', 'success');
+                setTimeout(loadConfig, 1000);
+            } catch (err) {
+                showStatus('Update failed.', 'error');
+            }
+        }
+
+        let currentRound = 1;
+
+        async function changeRound(delta) {
+            const res = await fetch(SCRIPT_URL);
+            const config = await res.json();
+            currentRound = Number(config.CurrentRound || 1) + delta;
+            updateConfig({ CurrentRound: currentRound });
+        }
+
+        function toggleSubmissions(open) {
+            updateConfig({ SubmissionsOpen: open });
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('messageInput').value.trim();
+            if (!message) {
+                showStatus('Please enter a message before sending.', 'error');
+                return;
+            }
+            updateConfig({ Message: message });
+            document.getElementById('messageInput').value = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadConfig);
+    </script>
+
+</body>
+
+</html>
