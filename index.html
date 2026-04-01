@@ -210,6 +210,11 @@
     </div>
 
     <div class="card">
+        <h2>Leaderboard</h2>
+        <button onclick="showLeaderboard()">Show Leaderboard</button>
+    </div>
+
+    <div class="card">
         <h2>Broadcast Message</h2>
         <input type="text" id="messageInput" placeholder="Enter message for participants">
         <button onclick="sendMessage()">Send Message</button>
@@ -222,7 +227,7 @@
     </footer>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzCL1hhMUQWa4HP_z-RXhHe5TGFGNkzjI57LCFNbDRATsJfT6fRNDf4YxhAaTAuLA4z/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzP3LBpH61UyABRQlw6b5IYqXQN46v-ToxtgdZL3p7md_dblbFgamPcXipWIAeqhm-W/exec';
 
         function showStatus(message, type) {
             const status = document.getElementById('status');
